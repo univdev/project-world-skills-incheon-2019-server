@@ -416,5 +416,9 @@
                 },
             };
 
+            $.get('/api/users').then((d) => {
+                console.log(d);
+            });
+
         })();
     </script>
