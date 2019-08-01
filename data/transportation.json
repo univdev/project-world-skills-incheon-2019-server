@@ -1,0 +1,34 @@
+{
+    "transportations": [
+        {
+            "id": 1,
+            "name": "고속 버스",
+            "description": "먼 이동기간동안 당신의 여행 파트너가 되어줄 고속 버스입니다.",
+            "interval": 30,
+            "cycle": ["06:00", "22:00"],
+            "rest": [0, 3, 6],
+            "price": 12000,
+            "limit": 40
+        },
+        {
+            "id": 2,
+            "name": "KTX 관광 에디션",
+            "description": "당신의 완벽한 관광을 도와줄 코레일의 관광 파트너, KTX 관광 에디션입니다.",
+            "interval": 90,
+            "cycle": ["06:00", "20:00"],
+            "rest": [1, 2],
+            "price": 78000,
+            "limit": 80
+        },
+        {
+            "id": 3,
+            "name": "Air Busan Festival Edition",
+            "description": "럭셔리한 항공편으로 주요 국가 및 주요 도시에서 부산으로 간편하게 이동하세요!",
+            "interval": 480,
+            "cycle": ["06:00", "20:00"],
+            "rest": [1, 3, 5],
+            "price": 96000,
+            "limit": 150
+        }
+    ]
+}
