@@ -71,11 +71,11 @@
 
         $(document).tooltip();
 
-        $.get('/data/reservation.json').then((data) => {
-            reservations = data.reservations;
-            return $.get('/data/placement.json');
+        $.get('/api/reservation/get').then((data) => {
+            reservations = data;
+            return $.get('/api/placement/get');
         }).then((data) => {
-            placements = data.places;
+            placements = data;
             PlacementTableManager.draw(placements);
         });
 
@@ -95,7 +95,7 @@
                     var score = placement.score;
                     var description = placement.description;
                     var price = placement.price;
-                    var rest = placement.rest;
+                    var rest = JSON.parse(placement.rest) || [];
                     var image = placement.image;
                     var restKor = [];
                     rest.forEach((index) => { restKor.push(RestFilter.get(index)); });
@@ -245,7 +245,7 @@
             getById(index) {
                 var result = null;
                 for (let i = 0; i < placements.length; i += 1) {
-                    if (placements[i].id === index) {
+                    if (placements[i].id == index) {
                         result = placements[i];
                         break;
                     }

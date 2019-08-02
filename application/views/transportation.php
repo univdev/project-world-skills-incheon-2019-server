@@ -171,7 +171,7 @@ crossorigin="anonymous"></script>
         var TransportationDataManager = {
             data: [],
             get(index) {
-                return (this.data || []).filter(item => item.id === index)[0];
+                return (this.data || []).filter(item => item.id == index)[0];
             },
             getTimeList(transportation) {
                 var result = [];
@@ -204,16 +204,16 @@ crossorigin="anonymous"></script>
             },
         };
 
-        $.get('/data/reservation.json').then((data) => {
-            ReservationDataManager.data = data.reservations;
+        $.get('/api/reservation/get').then((data) => {
+            ReservationDataManager.data = data;
         });
 
-        $.get('/data/transportation_reservation.json').then((data) => {
-            TransporationReservationDataManager.data = data.transportation_reservations;
+        $.get('/api/transportation_reservation/get').then((data) => {
+            TransporationReservationDataManager.data = data;
         });
 
-        $.get('/data/transportation.json').then((data) => {
-            TransportationDataManager.data = data.transportations;
+        $.get('/api/transportation/get').then((data) => {
+            TransportationDataManager.data = data;
             TransportationTableManager.draw(TransportationDataManager.data);
         });
 
@@ -225,13 +225,15 @@ crossorigin="anonymous"></script>
                 for (var i = 0; i < transporations.length; i += 1) {
                     var transportation = transporations[i];
                     var clone = this.row.clone();
+                    var cycle = JSON.parse(transportation.cycle);
+                    var rest = JSON.parse(transportation.rest);
                     clone.attr('data-idx', transportation.id);
                     clone.find('.transportation__name').text(transportation.name);
                     clone.find('.transportation__description').text(transportation.description);
                     clone.find('.transportation__price').text(`${transportation.price}원`);
                     clone.find('.transportation__cycle').text(`${transportation.interval}분`);
-                    clone.find('.transportation__time').text(`${transportation.cycle[0]} ~ ${transportation.cycle[1]}`);
-                    clone.find('.transportation__rest').text(RestFilter.getAll(transportation.rest).join(', '));
+                    clone.find('.transportation__time').text(`${cycle[0]} ~ ${cycle[1]}`);
+                    clone.find('.transportation__rest').text(RestFilter.getAll(rest).join(', '));
                     this.table.find('tbody').append(clone);
                 }
             },

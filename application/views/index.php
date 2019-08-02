@@ -255,10 +255,10 @@
             var reservations = [];
             var placements = [];
 
-            $.get('/data/reservation.json').then((data) => {
-                reservations = data.reservations;
-                $.get('/data/placement.json').then((data) => {
-                    placements = data.places;
+            $.get('/api/reservation/get').then((data) => {
+                reservations = data;
+                $.get('/api/placement/get').then((data) => {
+                    placements = data;
                     ReservationListManager.draw(ReservationDataManager.sort(reservations));
                 });
             });
@@ -271,7 +271,7 @@
 
             var PlacementDataManager = {
                 get(index) {
-                    return placements.filter((data) => data.id === index)[0];
+                    return placements.filter((data) => data.id == index)[0];
                 },
             };
 
@@ -417,7 +417,7 @@
             };
 
             $.get('/api/users').then((d) => {
-                console.log(d);
+                
             });
 
         })();
