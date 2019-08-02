@@ -15,13 +15,14 @@ class Reservation extends CI_Controller {
     }
 
     public function insert() {
+        $this->load->database();
         $data = [
             'placement' => $this->input->post('placement'),
             'since' => $this->input->post('since'),
             'until' => $this->input->post('until'),
-            'name' => $this->input->post('name'),
-            'createdAt' => $this->input->post('createdAt'),
-            'user' => $this->input->post('user'),
+            'name' => $this->input->post('name') || '이름',
+            'createdAt' => $this->input->post('createdAt') || date('Y-m-d'),
+            'user' => $this->input->post('user') || [],
         ];
 
         $this->db->insert('venue_reservations', $data);

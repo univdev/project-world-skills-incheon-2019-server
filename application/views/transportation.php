@@ -51,28 +51,8 @@
             </table>
         </div>
     </div>
-    <div class="footer">
-        <div class="container">
-            <div class="footer__upper">
-                <ul class="footer__menu">
-                    <li>CONTACT US</li>
-                    <li>SOCIAL</li>
-                    <li>STAGES</li>
-                    <li>WORLD</li>
-                </ul>
-                <div class="footer__copyright">
-                    COPYRIGHT ⓒ ALL RIGHT RESERVED.
-                </div>
-            </div>
-            <div class="footer__downer">
-                <div class="footer__description">
-                    Lorem ipsum dolor sit amet consectetur, adipisicing elit. Facere quidem nulla sapiente culpa eveniet et<br>
-                    minima numquam veniam? Dolores molestias consectetur voluptatibus ratione in possimus,
-                </div>
-                <img src="assets/grayscale_logo.png" alt="Bexco" class="footer__logo">
-            </div>
-        </div>
-    </div>
+    <img src="/gd?text=hello" id="capcha" alt="">
+    <button class="refresh">새로고침</button>
 </div>
 <div class="reservation-dialog">
     <form action="#" id="reservationForm">
@@ -166,6 +146,10 @@ crossorigin="anonymous"></script>
                     result += (member.old || 0) * 1 + (member.adult || 0) * 1 + (member.kid || 0) * 1;
                 }
                 return result;
+            },
+            getAbleCountByDayWithTime(transportationId, date, time) {
+                var transportation = TransportationDataManager.get(transportationId);
+                return transportation.limit - this.getCountByDateWithTime(transportation.id, date, time);
             },
         };
 
@@ -364,7 +348,12 @@ crossorigin="anonymous"></script>
                             var disabled = countPeople >= currentTransportation.limit;
                             timeListFormat.push({ time: format, disabled });
                         }
+                        var selectedTime = $('.reservation__time-combobox').val();
+                        console.log(selectedTime);
+                        ReservationManager.ableCount = TransporationReservationDataManager.getAbleCountByDayWithTime(currentTransportation.id, new Date(date), selectedTime);
                         TimeComboboxManager.addItems(timeListFormat);
+
+                        ReservationDialogManager.target.find('.reservation__left').text(`남은 좌석: ${ReservationManager.ableCount}개`);
                     },
                 });
             },
@@ -452,6 +441,7 @@ crossorigin="anonymous"></script>
             clear() {
                 this.target.find('option').remove();
                 if (this.target.find('option').length <= 0) this.activate(false);
+                ReservationDialogManager.target.find('.reservation__left').text('남은 좌석: 0개');
             },
             activate(flag) {
                 this.target.prop('disabled', !flag);
@@ -492,10 +482,16 @@ crossorigin="anonymous"></script>
             var selectedTime = target.val();
             var selectedDate = DatepickerManager.selected;
             var countPeople = TransporationReservationDataManager.getCountByDateWithTime(currentTransportation.id, selectedDate, selectedTime);
-            var ableCount = currentTransportation.limit - countPeople; // 예약 가능한 사람 수
-            ReservationManager.ableCount = ableCount;
+            ReservationManager.ableCount = TransporationReservationDataManager.getAbleCountByDayWithTime(currentTransportation.id, selectedDate, selectedTime);
 
-            ReservationDialogManager.target.find('.reservation__left').text(`남은 좌석: ${ableCount}개`);
+            ReservationDialogManager.target.find('.reservation__left').text(`남은 좌석: ${ReservationManager.ableCount}개`);
+        });
+
+        on('click', '.refresh', () => {
+            var capcha = $('#capcha');
+            var rand = Math.random();
+
+            capcha.attr('src', `/gd?q=${rand}`);
         });
     })();
 </script>

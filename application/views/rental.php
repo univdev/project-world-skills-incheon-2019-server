@@ -59,8 +59,8 @@
                     행사 시작 / 종료일
                 </div>
                 <div class="reservation__datepicker-row">
-                    <input type="text" name="since" class="start-datepicker reservation__input reservation__datepicker" placeholder="시작일"> ~ 
-                    <input type="text" name="until" class="end-datepicker reservation__input reservation__datepicker" placeholder="종료일">
+                    <input type="text" name="since" class="start-datepicker reservation__input reservation__datepicker" placeholder="시작일" autocomplete="off"> ~ 
+                    <input type="text" name="until" class="end-datepicker reservation__input reservation__datepicker" placeholder="종료일"  autocomplete="off">
                 </div>
             </div>
             <div class="reservation__row">
@@ -158,6 +158,9 @@
             },
             setTitle(title) {
                 this.target.find('.reservation__name').text(title);
+            },
+            clear() {
+                this.target.find('.reservation__datepicker').datepicker('value', null);
             },
         };
         ReservationDialogManager.init();
@@ -271,6 +274,17 @@
             },
         };
 
+        var ReservationManager = {
+            submit(formData) {
+                $.ajax('/api/reservation/insert', {
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                    method: 'post',
+                });
+            },
+        };
+
         on('click', `${PlacementTableManager.tbody} tr`, (e) => {
             var target = $(e.currentTarget);
             currentPlacement = PlacementDataManager.getById(target.data('idx'));
@@ -279,5 +293,21 @@
             ReservationDialogManager.setTitle(currentPlacementReservations.name);
             DatepickerManager.setRest(currentPlacementReservations);
             DatepickerManager.init();
+        });
+
+        on('submit', '#reservationForm', (e) => {
+            e.preventDefault();
+            var formData = new FormData(e.currentTarget);
+            formData.append('placement', currentPlacement.id);
+            ReservationManager.submit(formData);
+
+            $.get('/api/reservation/get').then((data) => {
+                reservations = data;
+                return $.get('/api/placement/get');
+            }).then(() => {
+                alert('예약이 성공적으로 완료되었습니다!');
+                ReservationDialogManager.clear();
+                ReservationDialogManager.visible(false);
+            });
         });
     </script>
