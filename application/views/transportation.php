@@ -84,6 +84,7 @@
                 </div>
                 <div class="reservation__col">
                     <select name="time" class="reservation__time-combobox" disabled></select>
+                    <div class="reservation__left">남은 좌석: 0개</div>
                 </div>
             </div>
         </div>
@@ -493,6 +494,8 @@ crossorigin="anonymous"></script>
             var countPeople = TransporationReservationDataManager.getCountByDateWithTime(currentTransportation.id, selectedDate, selectedTime);
             var ableCount = currentTransportation.limit - countPeople; // 예약 가능한 사람 수
             ReservationManager.ableCount = ableCount;
+
+            ReservationDialogManager.target.find('.reservation__left').text(`남은 좌석: ${ableCount}개`);
         });
     })();
 </script>
