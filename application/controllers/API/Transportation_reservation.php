@@ -48,6 +48,31 @@ class Transportation_reservation extends CI_Controller
                 ->set_output($data);
   }
 
+  public function insert() {
+    $this->load->database();
+    $member = [];
+    $config = [];
+    $price = $this->input->post('price');
+    $resultPrice = ($price * $this->input->post('adult')) + ($price * 0.6 * $this->input->post('kid'));
+    if ($price <= 100000 && $price > 20000)
+      $resultPrice += $price * 0.5 * $this->input->post('old');
+    else if ($price > 100000)
+      $resultPrice += $price * 0.2 * $this->input->post('old');
+    $config['transportation'] = $this->input->post('transportation');
+    $config['date'] = $this->input->post('date');
+    $config['time'] = $this->input->post('time');
+    $member['old'] = $this->input->post('old');
+    $member['kid'] = $this->input->post('kid');
+    $member['adult'] = $this->input->post('adult');
+    $config['member'] = json_encode($member);
+    $config['price'] = $resultPrice;
+
+    $this->db->insert('transportation_reservations', $config);
+    return $this->output
+              ->set_content_type('application/json')
+              ->set_output(json_encode($config));
+  }
+
 }
 
 

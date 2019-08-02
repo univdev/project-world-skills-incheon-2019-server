@@ -45,11 +45,28 @@
             </div>
         </div>
     <div class="reservation-dialog">
-        <h2 class="reservation__name">행사장 이름</h2>
-        <div class="reservation__datepicker-row">
-            <input type="text" class="start-datepicker reservation__datepicker" placeholder="시작일"> ~ 
-            <input type="text" class="end-datepicker reservation__datepicker" placeholder="종료일">
-        </div>
+        <form action="#" id="reservationForm">
+            <div class="reservation__row">
+                <div class="reservation__row-title">
+                    행사 이름
+                </div>
+                <div class="reservation__datepicker-row">
+                    <input type="text" name="name" class="reservation__input">
+                </div>
+            </div>
+            <div class="reservation__row">
+                <div class="reservation__row-title">
+                    행사 시작 / 종료일
+                </div>
+                <div class="reservation__datepicker-row">
+                    <input type="text" name="since" class="start-datepicker reservation__input reservation__datepicker" placeholder="시작일"> ~ 
+                    <input type="text" name="until" class="end-datepicker reservation__input reservation__datepicker" placeholder="종료일">
+                </div>
+            </div>
+            <div class="reservation__row">
+                <button class="reservation__submit">전송</button>
+            </div>
+        </form>
     </div>
     <script
     src="https://code.jquery.com/jquery-3.4.1.js"
@@ -129,7 +146,7 @@
                     title: '예약',
                     modal: true,
                     width: 500,
-                    height: 150,
+                    height: 280,
                     open() {
                         $('input').blur();
                     },

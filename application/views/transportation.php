@@ -140,10 +140,10 @@ crossorigin="anonymous"></script>
         var TransporationReservationDataManager = {
             data: [],
             get(index) {
-                return (this.data || []).filter(item => item.id === index)[0];
+                return (this.data || []).filter(item => item.id == index)[0];
             },
             getByTransportation(id) {
-                return (this.data || []).filter(item => item.transportation === id);
+                return (this.data || []).filter(item => item.transportation == id);
             },
             getPeopleCountByDay(date) {
                 var dateFormat = DateManager.format(date);
@@ -157,12 +157,12 @@ crossorigin="anonymous"></script>
             },
             getCountByDateWithTime(transporationId, date, time) {
                 var reservations = this.getByTransportation(transporationId);
-                var arr = reservations.filter(item => item.date === DateManager.format(date) && item.time === time);
+                var arr = reservations.filter(item => item.date == DateManager.format(date) && item.time == time);
                 var result = 0;
                 for (var i = 0; i < arr.length; i += 1) {
                     var item = arr[i];
-                    var member = item.member || {};
-                    result += (member.old || 0) + (member.adult || 0) + (member.kid || 0);
+                    var member = JSON.parse(item.member) || {};
+                    result += (member.old || 0) * 1 + (member.adult || 0) * 1 + (member.kid || 0) * 1;
                 }
                 return result;
             },
@@ -175,7 +175,7 @@ crossorigin="anonymous"></script>
             },
             getTimeList(transportation) {
                 var result = [];
-                var cycle = transportation.cycle;
+                var cycle = JSON.parse(transportation.cycle);
                 var cycleStart = DateManager.getOnlyTime(cycle[0]).getTime();
                 var cycleEnd = DateManager.getOnlyTime(cycle[1]).getTime();
                 var interval = transportation.interval;
@@ -311,6 +311,21 @@ crossorigin="anonymous"></script>
                     alert(message);
                     return;
                 }
+
+                $.ajax('/api/transportation_reservation/insert', {
+                    method: 'post',
+                    processData: false,
+                    contentType: false,
+                    data: formData,
+                }).then(() => {
+                    alert('성공적으로 예약을 진행하였습니다!');
+                    ReservationDialogManager.clear();
+                    ReservationDialogManager.show(false);
+
+                    $.get('/api/transportation_reservation/get').then((data) => {
+                        TransporationReservationDataManager.data = data;
+                    });
+                });
             },
         };
 
@@ -346,7 +361,6 @@ crossorigin="anonymous"></script>
                             var format = DateManager.timeFormat(timeList[i]);
                             var countPeople = TransporationReservationDataManager.getCountByDateWithTime(currentTransportation.id, new Date(date), format);
                             var disabled = countPeople >= currentTransportation.limit;
-                            // TODO: 이거 disabled 제한 걸 것.
                             timeListFormat.push({ time: format, disabled });
                         }
                         TimeComboboxManager.addItems(timeListFormat);
@@ -466,6 +480,9 @@ crossorigin="anonymous"></script>
         on('submit', '#reservationForm', (e) => {
             e.preventDefault();
             var formData = new FormData(e.currentTarget);
+            formData.append('transportation', currentTransportation.id);
+            formData.append('date', DateManager.format(DatepickerManager.selected));
+            formData.append('price', currentTransportation.price);
             ReservationManager.submit(formData);
         });
 
